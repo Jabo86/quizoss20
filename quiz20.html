@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 31</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 31</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (901-930) con opzioni riordinate casualmente
+        const questions = [
+            {
+                question: "Cos’è la gastrite?",
+                options: ["Un accumulo di liquido nell’intestino", "Un’infiammazione della mucosa gastrica", "Un’infezione del fegato"],
+                correct: "Un’infiammazione della mucosa gastrica",
+                explanation: "La gastrite è un’infiammazione acuta o cronica della mucosa gastrica, spesso causata da infezioni (es. Helicobacter pylori), farmaci (es. FANS) o abuso di alcol. Provoca dolore epigastrico, nausea, bruciore e, in casi gravi, sanguinamento. Non è un’infezione del fegato (epatite) né un accumulo di liquido nell’intestino. Gli Operatori Socio-Sanitari (OSS) devono monitorare i sintomi, garantire una dieta leggera, assistere nella somministrazione di antiacidi, e segnalare all’infermiere sintomi come vomito ematico o dolore severo."
+            },
+            {
+                question: "Quale è un segno tipico della gastrite acuta?",
+                options: ["Poliuria", "Dolore epigastrico", "Ittero"],
+                correct: "Dolore epigastrico",
+                explanation: "Il dolore epigastrico, spesso bruciante e associato a nausea o vomito, è un segno tipico della gastrite acuta, dovuto all’irritazione della mucosa gastrica. Può essere aggravato dai pasti. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la tolleranza alimentare, garantire pasti piccoli e frequenti, monitorare il vomito, e segnalare all’infermiere sintomi come melena o febbre."
+            },
+            {
+                question: "Cos’è l’ulcera gastrica?",
+                options: ["Un’infezione del pancreas", "Una lesione della mucosa gastrica", "Un accumulo di liquido nello stomaco"],
+                correct: "Una lesione della mucosa gastrica",
+                explanation: "L’ulcera gastrica è una lesione erosiva della mucosa gastrica, spesso causata da Helicobacter pylori, FANS o stress. Provoca dolore epigastrico, che può essere alleviato dai pasti, e rischio di complicanze come perforazione o emorragia. Non è un’infezione del pancreas (pancreatite) né un accumulo di liquido nello stomaco. Gli OSS devono monitorare il dolore, garantire l’assunzione di inibitori della pompa protonica, osservare le feci per melena, e segnalare sintomi come vomito ematico o ipotensione."
+            },
+            {
+                question: "Quale è un segno tipico dell’ulcera gastrica?",
+                options: ["Ittero", "Dolore epigastrico alleviato dai pasti", "Oliguria"],
+                correct: "Dolore epigastrico alleviato dai pasti",
+                explanation: "Il dolore epigastrico alleviato dai pasti è un segno tipico dell’ulcera gastrica, in contrasto con l’ulcera duodenale dove il dolore è aggravato dai pasti. Può essere associato a nausea o pirosi. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la relazione tra pasti e sintomi, garantire una dieta appropriata, monitorare le feci, e segnalare all’infermiere sintomi come anemia o dolore severo."
+            },
+            {
+                question: "Cos’è la colite ulcerosa?",
+                options: ["Un accumulo di liquido nello stomaco", "Un’infezione del fegato", "Una malattia infiammatoria cronica dell’intestino"],
+                correct: "Una malattia infiammatoria cronica dell’intestino",
+                explanation: "La colite ulcerosa è una malattia infiammatoria cronica intestinale che colpisce il colon e il retto, causando ulcere, diarrea ematica, dolore addominale e tenesmo. È di natura autoimmune e può avere riacutizzazioni. Non è un’infezione del fegato (epatite) né un accumulo di liquido nello stomaco. Gli OSS devono monitorare la frequenza delle evacuazioni, garantire l’idratazione, assistere nella gestione del dolore, e segnalare sintomi come febbre o sangue abbondante nelle feci."
+            },
+            {
+                question: "Quale è un segno tipico della colite ulcerosa?",
+                options: ["Ittero", "Diarrea ematica", "Poliuria"],
+                correct: "Diarrea ematica",
+                explanation: "La diarrea ematica, spesso accompagnata da dolore addominale e tenesmo, è un segno tipico della colite ulcerosa, dovuta all’infiammazione e alle ulcere della mucosa colica. Può causare anemia o disidratazione. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono registrare il numero e la qualità delle evacuazioni, garantire l’igiene perianale, monitorare l’idratazione, e segnalare all’infermiere sintomi come tachicardia o debolezza."
+            },
+            {
+                question: "Cos’è la malattia di Crohn?",
+                options: ["Un’infezione del pancreas", "Una malattia infiammatoria cronica intestinale", "Un accumulo di liquido nell’intestino"],
+                correct: "Una malattia infiammatoria cronica intestinale",
+                explanation: "La malattia di Crohn è una malattia infiammatoria cronica intestinale che può colpire qualsiasi segmento del tratto gastrointestinale, causando infiammazione transmurale, dolore addominale, diarrea e fistole. È di natura autoimmune. Non è un’infezione del pancreas (pancreatite) né un accumulo di liquido nell’intestino. Gli OSS devono monitorare i sintomi, garantire una dieta appropriata, assistere nella gestione delle fistole, e segnalare sintomi come febbre o occlusione intestinale."
+            },
+            {
+                question: "Quale è un segno tipico della malattia di Crohn?",
+                options: ["Oliguria", "Dolore addominale con diarrea", "Ittero"],
+                correct: "Dolore addominale con diarrea",
+                explanation: "Il dolore addominale con diarrea, spesso cronica e associata a perdita di peso, è un segno tipico della malattia di Crohn, dovuto all’infiammazione intestinale. Può essere accompagnato da fistole o ascessi. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la consistenza delle feci, garantire l’idratazione, monitorare il peso, e segnalare all’infermiere sintomi come dolore severo o segni di occlusione."
+            },
+            {
+                question: "Cos’è l’occlusione intestinale?",
+                options: ["Un accumulo di liquido nel fegato", "Un blocco del passaggio intestinale", "Un’infezione dell’intestino"],
+                correct: "Un blocco del passaggio intestinale",
+                explanation: "L’occlusione intestinale è un blocco meccanico o funzionale del passaggio intestinale, che causa dolore addominale, distensione, vomito e assenza di evacuazioni. Può essere dovuta a volvolo, aderenze o tumori. Non è un’infezione dell’intestino né un accumulo di liquido nel fegato (ascite). Gli OSS devono monitorare i segni vitali, osservare l’addome per distensione, garantire il digiuno, e segnalare sintomi come vomito fecaloide o febbre."
+            },
+            {
+                question: "Quale è un segno tipico dell’occlusione intestinale?",
+                options: ["Poliuria", "Distensione addominale", "Ittero"],
+                correct: "Distensione addominale",
+                explanation: "La distensione addominale, spesso accompagnata da dolore crampiforme e assenza di evacuazioni, è un segno tipico dell’occlusione intestinale, dovuta all’accumulo di gas e feci. Può essere associata a vomito. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono misurare la circonferenza addominale, monitorare il vomito, garantire il comfort, e segnalare all’infermiere sintomi come tachicardia o addome rigido."
+            },
+            {
+                question: "Cos’è la pancreatite acuta?",
+                options: ["Un’infezione del fegato", "Un’infiammazione acuta del pancreas", "Un accumulo di liquido nello stomaco"],
+                correct: "Un’infiammazione acuta del pancreas",
+                explanation: "La pancreatite acuta è un’infiammazione improvvisa del pancreas, spesso causata da calcoli biliari o abuso di alcol, che provoca dolore addominale severo, nausea, vomito e febbre. Può portare a complicanze come shock o insufficienza multiorgano. Non è un’infezione del fegato (epatite) né un accumulo di liquido nello stomaco. Gli OSS devono monitorare il dolore, garantire il digiuno, osservare i parametri vitali, e segnalare sintomi come ipotensione o dispnea."
+            },
+            {
+                question: "Quale è un segno tipico della pancreatite acuta?",
+                options: ["Ittero", "Dolore addominale irradiato alla schiena", "Oliguria"],
+                correct: "Dolore addominale irradiato alla schiena",
+                explanation: "Il dolore addominale severo, spesso irradiato alla schiena e aggravato dai pasti, è un segno tipico della pancreatite acuta, accompagnato da nausea e vomito. Può essere associato a febbre. L’oliguria (ridotta produzione di urina) può verificarsi solo in casi gravi, mentre l’ittero (colorazione giallastra della pelle) non è un segno primario. Gli OSS devono osservare l’intensità del dolore, garantire la posizione semi-seduta, monitorare la temperatura, e segnalare all’infermiere sintomi come tachicardia o cianosi."
+            },
+            {
+                question: "Cos’è l’epatite virale?",
+                options: ["Un’infiammazione del pancreas", "Un’infezione virale del fegato", "Un accumulo di liquido nel fegato"],
+                correct: "Un’infezione virale del fegato",
+                explanation: "L’epatite virale è un’infezione del fegato causata da virus (es. HAV, HBV, HCV), che provoca infiammazione, ittero, stanchezza, nausea e dolore addominale. Può essere acuta o cronica. Non è un’infiammazione del pancreas (pancreatite) né un accumulo di liquido nel fegato (ascite). Gli OSS devono utilizzare dispositivi di protezione individuale (DPI), monitorare il colorito cutaneo, garantire una dieta leggera, e segnalare sintomi come febbre persistente o sanguinamenti."
+            },
+            {
+                question: "Quale è un segno tipico dell’epatite virale acuta?",
+                options: ["Poliuria", "Ittero", "Oliguria"],
+                correct: "Ittero",
+                explanation: "L’ittero, ovvero la colorazione giallastra di pelle e sclere, è un segno tipico dell’epatite virale acuta, dovuto all’accumulo di bilirubina. È accompagnato da stanchezza, nausea e urine scure. La poliuria (aumento della produzione di urina) e l’oliguria (ridotta produzione di urina) non sono segni primari. Gli OSS devono osservare il colore di cute e urine, garantire l’igiene, monitorare l’appetito, e segnalare all’infermiere sintomi come confusione o emorragie."
+            },
+            {
+                question: "Cos’è la cirrosi epatica?",
+                options: ["Un’infezione del fegato", "Una sostituzione del tessuto epatico con tessuto fibroso", "Un accumulo di liquido nell’intestino"],
+                correct: "Una sostituzione del tessuto epatico con tessuto fibroso",
+                explanation: "La cirrosi epatica è una malattia cronica caratterizzata dalla sostituzione del tessuto epatico con tessuto fibroso, spesso causata da epatite cronica o abuso di alcol. Provoca ittero, ascite, edema e rischio di emorragie. Non è un’infezione del fegato (epatite) né un accumulo di liquido nell’intestino. Gli OSS devono monitorare il peso, osservare l’addome per ascite, garantire una dieta a basso contenuto di sodio, e segnalare sintomi come sanguinamenti o confusione."
+            },
+            {
+                question: "Quale è un segno tipico della cirrosi epatica?",
+                options: ["Ascite", "Poliuria", "Oliguria"],
+                correct: "Ascite",
+                explanation: "L’ascite, ovvero l’accumulo di liquido nella cavità peritoneale, è un segno tipico della cirrosi epatica, dovuto all’ipertensione portale e alla ridotta produzione di albumina. È accompagnata da edema e ittero. La poliuria (aumento della produzione di urina) e l’oliguria (ridotta produzione di urina) non sono segni primari. Gli OSS devono misurare la circonferenza addominale, monitorare il peso, garantire il comfort, e segnalare all’infermiere sintomi come febbre o dolore addominale."
+            },
+            {
+                question: "Cos’è la colecistite acuta?",
+                options: ["Un’infezione del pancreas", "Un’infiammazione della colecisti", "Un accumulo di liquido nel fegato"],
+                correct: "Un’infiammazione della colecisti",
+                explanation: "La colecistite acuta è un’infiammazione della colecisti, spesso causata da calcoli biliari che ostruiscono il dotto cistico, provocando dolore addominale destro, febbre e nausea. Può portare a complicanze come perforazione. Non è un’infezione del pancreas (pancreatite) né un accumulo di liquido nel fegato (ascite). Gli OSS devono monitorare il dolore, garantire il digiuno, osservare i parametri vitali, e segnalare sintomi come febbre alta o ittero."
+            },
+            {
+                question: "Quale è un segno tipico della colecistite acuta?",
+                options: ["Dolore quadrantale destro", "Ittero", "Poliuria"],
+                correct: "Dolore quadrantale destro",
+                explanation: "Il dolore quadrantale destro, spesso irradiato alla spalla destra e aggravato dai pasti grassi, è un segno tipico della colecistite acuta, dovuto all’infiammazione della colecisti. È accompagnato da febbre e nausea. L’ittero (colorazione giallastra della pelle) può verificarsi solo in caso di ostruzione biliare, mentre la poliuria (aumento della produzione di urina) non è correlata. Gli OSS devono osservare la tolleranza alimentare, garantire la posizione semi-seduta, monitorare la temperatura, e segnalare all’infermiere sintomi come vomito o tachicardia."
+            },
+            {
+                question: "Cos’è l’appendicite acuta?",
+                options: ["Un accumulo di liquido nell’intestino", "Un’infezione del fegato", "Un’infiammazione dell’appendice"],
+                correct: "Un’infiammazione dell’appendice",
+                explanation: "L’appendicite acuta è un’infiammazione dell’appendice, spesso causata da un’ostruzione, che provoca dolore addominale inizialmente periumbilicale, poi localizzato nel quadrante inferiore destro, febbre e nausea. È un’emergenza chirurgica. Non è un’infezione del fegato (epatite) né un accumulo di liquido nell’intestino. Gli OSS devono monitorare il dolore, garantire il digiuno, osservare i parametri vitali, e segnalare sintomi come febbre alta o addome rigido."
+            },
+            {
+                question: "Quale è un segno tipico dell’appendicite acuta?",
+                options: ["Dolore al punto di McBurney", "Poliuria", "Ittero"],
+                correct: "Dolore al punto di McBurney",
+                explanation: "Il dolore al punto di McBurney, localizzato nel quadrante inferiore destro e aggravato dalla pressione, è un segno tipico dell’appendicite acuta, accompagnato da febbre e nausea. Può essere associato a segno di Rovsing o rimbalzo. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la localizzazione del dolore, garantire il comfort, monitorare la temperatura, e segnalare all’infermiere sintomi come vomito o addome teso."
+            },
+            {
+                question: "Cos’è la diverticolite?",
+                options: ["Un’infezione del pancreas", "Un’infiammazione dei diverticoli intestinali", "Un accumulo di liquido nel fegato"],
+                correct: "Un’infiammazione dei diverticoli intestinali",
+                explanation: "La diverticolite è un’infiammazione dei diverticoli (sacche nella parete intestinale), spesso nel colon sigmoideo, causata da infezioni o ostruzioni. Provoca dolore addominale sinistro, febbre e alterazioni dell’alvo. Non è un’infezione del pancreas (pancreatite) né un accumulo di liquido nel fegato (ascite). Gli OSS devono monitorare la frequenza delle evacuazioni, garantire una dieta appropriata, osservare i parametri vitali, e segnalare sintomi come febbre alta o sanguinamento."
+            },
+            {
+                question: "Quale è un segno tipico della diverticolite?",
+                options: ["Ittero", "Dolore addominale sinistro", "Poliuria"],
+                correct: "Dolore addominale sinistro",
+                explanation: "Il dolore addominale sinistro, spesso accompagnato da febbre e diarrea o stitichezza, è un segno tipico della diverticolite, dovuto all’infiammazione dei diverticoli nel colon sigmoideo. Può essere associato a massa palpabile. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la qualità delle feci, garantire l’idratazione, monitorare la temperatura, e segnalare all’infermiere sintomi come dolore severo o sanguinamento."
+            },
+            {
+                question: "Cos’è la stitichezza cronica?",
+                options: ["Un’infezione intestinale", "Una difficoltà persistente nell’evacuazione", "Un accumulo di liquido nello stomaco"],
+                correct: "Una difficoltà persistente nell’evacuazione",
+                explanation: "La stitichezza cronica è una condizione caratterizzata da difficoltà persistente nell’evacuazione, con feci dure, evacuazioni rare o senso di svuotamento incompleto. Può essere causata da dieta povera di fibre, sedentarietà o farmaci. Non è un’infezione intestinale né un accumulo di liquido nello stomaco. Gli OSS devono promuovere una dieta ricca di fibre, garantire l’idratazione, assistere nella mobilizzazione, e segnalare sintomi come dolore addominale o sangue nelle feci."
+            },
+            {
+                question: "Quale è un segno tipico della stitichezza cronica?",
+                options: ["Oliguria", "Feci dure e rare", "Ittero"],
+                correct: "Feci dure e rare",
+                explanation: "Le feci dure e rare, spesso accompagnate da sforzo evacuativo o senso di ostruzione, sono un segno tipico della stitichezza cronica. Può essere associata a gonfiore addominale. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono registrare la frequenza delle evacuazioni, promuovere l’assunzione di liquidi, garantire l’attività fisica, e segnalare all’infermiere sintomi come emorroidi o fecalomi."
+            },
+            {
+                question: "Cos’è la diarrea acuta?",
+                options: ["Un accumulo di liquido nel fegato", "Un aumento della frequenza delle evacuazioni liquide", "Un’infezione del pancreas"],
+                correct: "Un aumento della frequenza delle evacuazioni liquide",
+                explanation: "La diarrea acuta è un aumento della frequenza delle evacuazioni con feci liquide, spesso causata da infezioni (es. virus, batteri), intossicazioni alimentari o farmaci. Provoca disidratazione e squilibri elettrolitici. Non è un’infezione del pancreas (pancreatite) né un accumulo di liquido nel fegato (ascite). Gli OSS devono monitorare la frequenza delle evacuazioni, garantire l’idratazione, osservare l’igiene, e segnalare sintomi come febbre o disidratazione."
+            },
+            {
+                question: "Quale è un segno tipico della diarrea acuta?",
+                options: ["Evacuazioni liquide frequenti", "Poliuria", "Ittero"],
+                correct: "Evacuazioni liquide frequenti",
+                explanation: "Le evacuazioni liquide frequenti, spesso accompagnate da crampi addominali e disidratazione, sono un segno tipico della diarrea acuta. Può essere associata a febbre o nausea. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono registrare il volume e la consistenza delle feci, garantire soluzioni reidratanti, monitorare i parametri vitali, e segnalare all’infermiere sintomi come tachicardia o debolezza."
+            },
+            {
+                question: "Cos’è l’ernia iatale?",
+                options: ["Un’infezione dello stomaco", "Uno spostamento dello stomaco nell’esofago", "Un accumulo di liquido nell’intestino"],
+                correct: "Uno spostamento dello stomaco nell’esofago",
+                explanation: "L’ernia iatale è uno spostamento di una parte dello stomaco attraverso il diaframma nell’esofago, spesso causando reflusso gastroesofageo, pirosi e dolore toracico. Può essere associata a obesità o tosse cronica. Non è un’infezione dello stomaco né un accumulo di liquido nell’intestino. Gli OSS devono garantire pasti piccoli e frequenti, mantenere il paziente in posizione semi-seduta dopo i pasti, monitorare i sintomi, e segnalare all’infermiere sintomi come dispnea o dolore severo."
+            },
+            {
+                question: "Quale è un segno tipico dell’ernia iatale?",
+                options: ["Pirosi", "Oliguria", "Ittero"],
+                correct: "Pirosi",
+                explanation: "La pirosi, ovvero il bruciore retrosternale, è un segno tipico dell’ernia iatale, dovuto al reflusso acido nell’esofago. È spesso aggravata da pasti abbondanti o posizione sdraiata. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la relazione tra pasti e sintomi, evitare cibi acidi, garantire il comfort, e segnalare all’infermiere sintomi come disfagia o sanguinamento."
+            },
+            {
+                question: "Cos’è il reflusso gastroesofageo?",
+                options: ["Un accumulo di liquido nello stomaco", "Un ritorno di contenuto gastrico nell’esofago", "Un’infezione del fegato"],
+                correct: "Un ritorno di contenuto gastrico nell’esofago",
+                explanation: "Il reflusso gastroesofageo è il ritorno di contenuto acido gastrico nell’esofago, spesso causato da un’ernia iatale o debolezza dello sfintere esofageo inferiore. Provoca pirosi, rigurgito e possibile tosse notturna. Non è un’infezione del fegato (epatite) né un accumulo di liquido nello stomaco. Gli OSS devono promuovere una dieta anti-reflusso, garantire la posizione elevata del capo durante il sonno, monitorare i sintomi, e segnalare sintomi come dolore toracico o perdita di peso."
+            },
+            {
+                question: "Quale è un segno tipico del reflusso gastroesofageo?",
+                options: ["Ittero", "Bruciore retrosternale", "Poliuria"],
+                correct: "Bruciore retrosternale",
+                explanation: "Il bruciore retrosternale (pirosi), spesso aggravato da pasti abbondanti o posizione sdraiata, è un segno tipico del reflusso gastroesofageo, dovuto all’irritazione esofagea. Può essere associato a rigurgito acido. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i fattori scatenanti, garantire pasti leggeri, mantenere il paziente in posizione semi-seduta, e segnalare all’infermiere sintomi come disfagia o tosse persistente."
+            },
+            {
+                question: "Cos’è la steatosi epatica?",
+                options: ["Un’infezione del fegato", "Un accumulo di grasso nel fegato", "Un accumulo di liquido nell’intestino"],
+                correct: "Un accumulo di grasso nel fegato",
+                explanation: "La steatosi epatica è un accumulo di grasso nel fegato, spesso associata a obesità, diabete o abuso di alcol. Può essere asintomatica o causare stanchezza e dolore addominale destro. Può evolvere in cirrosi. Non è un’infezione del fegato (epatite) né un accumulo di liquido nell’intestino. Gli OSS devono promuovere una dieta equilibrata, monitorare il peso, garantire l’attività fisica, e segnalare sintomi come ittero o astenia marcata."
+            },
+            {
+                question: "Quale è un segno tipico della steatosi epatica avanzata?",
+                options: ["Oliguria", "Stanchezza cronica", "Ittero"],
+                correct: "Stanchezza cronica",
+                explanation: "La stanchezza cronica, spesso accompagnata da lieve dolore addominale destro, è un segno tipico della steatosi epatica avanzata, dovuta al danno epatico. L’ittero (colorazione giallastra della pelle) può verificarsi solo in fasi tardive, mentre l’oliguria (ridotta produzione di urina) non è correlata. Gli OSS devono osservare il livello di energia del paziente, garantire una dieta povera di grassi, monitorare il peso, e segnalare all’infermiere sintomi come ascite o confusione."
+            },
+            {
+                question: "Cos’è l’ileo paralitico?",
+                options: ["Un’infezione intestinale", "Un arresto della motilità intestinale", "Un accumulo di liquido nel fegato"],
+                correct: "Un arresto della motilità intestinale",
+                explanation: "L’ileo paralitico è un arresto funzionale della motilità intestinale, spesso post-chirurgico o dovuto a squilibri elettrolitici, che causa distensione addominale, vomito e assenza di peristalsi. Non è un’infezione intestinale né un accumulo di liquido nel fegato (ascite). Gli OSS devono monitorare i rumori intestinali, garantire il digiuno, osservare l’addome, e segnalare sintomi come febbre o vomito fecaloide."
+            },
+            {
+                question: "Quale è un segno tipico dell’ileo paralitico?",
+                options: ["Assenza di rumori intestinali", "Poliuria", "Ittero"],
+                correct: "Assenza di rumori intestinali",
+                explanation: "L’assenza di rumori intestinali, rilevata all’auscultazione, è un segno tipico dell’ileo paralitico, dovuta alla mancanza di peristalsi. È accompagnata da distensione addominale e vomito. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono misurare la circonferenza addominale, monitorare il vomito, garantire il comfort, e segnalare all’infermiere sintomi come tachicardia o febbre."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
